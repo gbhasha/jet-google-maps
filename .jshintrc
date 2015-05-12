@@ -1,0 +1,25 @@
+{
+  "curly": true,
+  "eqeqeq": true,
+  "forin": true,
+  "freeze": true,
+  "immed": true,
+  "indent": 2,
+  "latedef": "nofunc",
+  "newcap": true,
+  "noarg": true,
+  "sub": true,
+  "undef": true,
+  "unused": false,
+  "boss": true,
+  "eqnull": true,
+  "browser": true,
+  "globals": {
+    "angular": true,
+    "define": true,
+    "jQuery": true,
+    "$": true,
+    "require": true,
+    "_": true
+  }
+}

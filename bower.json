@@ -1,0 +1,28 @@
+{
+  "name": "jet-google-maps",
+  "version": "0.0.1",
+  "authors": [
+    "Nisheed Jagadish"
+  ],
+  "description": "Create Jet Airways route map using Google Maps",
+  "keywords": [
+    "jet",
+    "google",
+    "maps",
+    "api"
+  ],
+  "license": "MIT",
+  "homepage": "https://www.github.com/jet-google-maps",
+  "private": true,
+  "ignore": [
+    "**/.*",
+    "node_modules",
+    "bower_components",
+    "test",
+    "tests"
+  ],
+  "devDependencies": {
+    "jquery": "~2.1.4",
+    "bootstrap": "~3.3.4"
+  }
+}
