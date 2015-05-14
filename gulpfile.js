@@ -31,7 +31,7 @@ var gulp = require('gulp'),
 var paths = {
   css: {
     dest: ['app/css'],
-    watch: ['app/less/**/*.less','app/less/**.less'],
+    watch: ['app/less/**/*.less', 'app/less/**.less'],
     clean: ['app/css/**', 'app/less/bootstrap']
   },
   js: {
@@ -142,7 +142,7 @@ gulp.task('watch', function() {
 });
 
 // Compile less to css build
-gulp.task('lessBuild', function() {
+gulp.task('lessBuild', ['clean-css'], function() {
   return gulp.src('app/less/styles.less')
     .pipe(plumber())
     .pipe(less())
@@ -154,7 +154,7 @@ gulp.task('lessBuild', function() {
 });
 
 // Compile less bootstrap
-gulp.task('lessBootstrap', function() {
+gulp.task('lessBootstrap', ['clean-css'], function() {
   return gulp.src('app/less/bootstrap/bootstrap.less')
     .pipe(plumber())
     .pipe(less())
