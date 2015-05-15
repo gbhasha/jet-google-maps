@@ -22,7 +22,10 @@
       mapFeatureName: 'Jet Airways Flight Routes',
       mapMarkerImage: 'img/point.png',
       airportsUrl: 'data/airports.csv',
-      routesUrl: 'data/routes.json'
+      routesUrl: 'data/routes.json',
+      loaderClassName: '',
+      loaderBgColor: '#FFFFFF',
+      loaderSpinnerUrl: 'img/spinner.gif'
     };
 
     var _options, _mapOptions = {};
@@ -59,6 +62,7 @@
         panControl: false,
         streetViewControl: false,
         zoomControl: true,
+        noClear: true,
         zoomControlOptions: {
           style: google.maps.ZoomControlStyle.SMALL,
           position: google.maps.ControlPosition.LEFT_BOTTOM
@@ -336,16 +340,50 @@
 
   JetGoogleMaps.prototype.createMap = function() {
     var self = this;
-    self.map = new google.maps.Map(document.getElementById(self.settings.wrapperId), self.getMapOptions());
+    self.wrapperEl = document.getElementById(self.settings.wrapperId);
+
+    //Show the spinner till map loads
+    self.createLoader();
+
+    self.map = new google.maps.Map(self.wrapperEl, self.getMapOptions());
     //Create custom feature map
     var customMapType = new google.maps.StyledMapType(self.settings.mapFeatures, {
       name: self.settings.mapFeatureName
     });
+
     //Set custom feature map
     self.map.mapTypes.set(self.settings.mapId, customMapType);
     //Check bounds of the maps if panning over the poles
     google.maps.event.addListener(self.map, 'center_changed', function() {
       self.checkMapBounds();
+    });
+
+    var tilesloaded = false;
+    var mapIdle = false;
+
+    // hide loader once the map is loaded
+    // Use this event only at the begining hence use of addListenerOnce
+    google.maps.event.addListenerOnce(self.map, 'tilesloaded', function() {
+      tilesloaded = true;
+      if (tilesloaded && mapIdle) {
+        //hide spinner
+        self.loaderHtml.fadeOut();
+      }
+    });
+    // hide loader once the map is loaded
+    // Use this event only at the begining hence use of addListenerOnce
+    google.maps.event.addListenerOnce(self.map, 'idle', function() {
+      mapIdle = true;
+      if (tilesloaded && mapIdle) {
+        //hide spinner
+        self.loaderHtml.fadeOut();
+      }
+    });
+
+    //On Resize reset map to default zoom and center
+    $(window).resize(function() {
+      self.map.setZoom(self.settings.mapDefaultZoom);
+      self.map.setCenter(new google.maps.LatLng(self.settings.centerLatitude, self.settings.centerLongitude));
     });
   };
 
@@ -382,6 +420,53 @@
       });
 
     });
+  };
+
+  JetGoogleMaps.prototype.createLoader = function() {
+    var self = this;
+
+    $(self.wrapperEl).empty();
+
+    self.loaderHtml = $('<div></div')
+      .attr('id', 'jet-map-loader')
+      .addClass('jet-map-loader ' + self.settings.loaderClassName)
+      .css({
+        position: 'relative',
+        width: '100%',
+        height: '100%',
+        zIndex: 1
+      });
+
+    var loaderOverlay = $('<div></div>')
+      .addClass('jet-map-loader-overlay')
+      .css({
+        position: 'absolute',
+        width: '100%',
+        height: '100%',
+        backgroundColor: self.settings.loaderBgColor,
+        opacity: 0.75
+      });
+
+    var loaderSpinner = $('<div></div>')
+      .addClass('jet-map-loader-spinner')
+      .css({
+        position: 'absolute',
+        width: 50,
+        height: 50,
+        top: 0,
+        bottom: 0,
+        left: 0,
+        right: 0,
+        margin: 'auto',
+        backgroundImage: 'url(\'' + self.settings.loaderSpinnerUrl + '\')',
+        backgroundRepeat: 'no-repeat',
+        backgroundPosition: 'center center'
+      });
+
+    self.loaderHtml.append(loaderOverlay);
+    self.loaderHtml.append(loaderSpinner);
+
+    $(self.wrapperEl).append(self.loaderHtml);
   };
 
 })(window)
